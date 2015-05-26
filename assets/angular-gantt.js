@@ -4603,7 +4603,7 @@ Github: https://github.com/angular-gantt/angular-gantt.git
                 if (columnWidth !== undefined && bodySmallerThanGantt) {
                     css.width = ($scope.gantt.width - vScrollbarWidth + this.gantt.scroll.getBordersWidth()) + 'px';
                 } else if (maxHeightActivated) {
-                    css.width = $scope.gantt.getWidth() - $scope.gantt.side.getWidth() + 1 - vScrollbarWidth + 'px';
+                    css.width = $scope.gantt.getWidth() - $scope.gantt.side.getWidth() - vScrollbarWidth + 'px';
                 }
 
                 /*
@@ -4998,7 +4998,7 @@ Github: https://github.com/angular-gantt/angular-gantt.git
 
                 $document[0].body.removeChild (outer);
 
-                return (w1 - w2);
+                return (w1 - w2 || 1);
             },
             /**
              * Compute the height of scrollbar.

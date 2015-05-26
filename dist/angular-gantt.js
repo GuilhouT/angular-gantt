@@ -4998,7 +4998,7 @@ Github: https://github.com/angular-gantt/angular-gantt.git
 
                 $document[0].body.removeChild (outer);
 
-                return (w1 - w2);
+                return (w1 - w2 || 1);
             },
             /**
              * Compute the height of scrollbar.
