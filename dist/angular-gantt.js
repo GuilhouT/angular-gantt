@@ -742,13 +742,16 @@ Github: https://github.com/angular-gantt/angular-gantt.git
          * @param {moment} endDate
          */
         Calendar.prototype.solve = function(timeFrames, startDate, endDate) {
-            var defaultWorking = timeFrames.length === 0;
+            var working = true; // default
             var color;
             var classes;
             var minDate;
             var maxDate;
 
             angular.forEach(timeFrames, function(timeFrame) {
+                if (timeFrame.hasOwnProperty('working')) {
+                  working = !!timeFrame.working;
+                }
                 if (minDate === undefined || minDate > timeFrame.start) {
                     minDate = timeFrame.start;
                 }
@@ -774,7 +777,7 @@ Github: https://github.com/angular-gantt/angular-gantt.git
                 endDate = maxDate;
             }
 
-            var solvedTimeFrames = [new TimeFrame({start: startDate, end: endDate, working: defaultWorking, magnet: false, color: color, classes: classes})];
+            var solvedTimeFrames = [new TimeFrame({start: startDate, end: endDate, working: working, magnet: false, color: color, classes: classes})];
 
             timeFrames = $filter('filter')(timeFrames, function(timeFrame) {
                 return (timeFrame.start === undefined || timeFrame.start < endDate) && (timeFrame.end === undefined || timeFrame.end > startDate);
