@@ -13,6 +13,7 @@
                 var toDate = lastColumn.endDate;
 
                 var res = [];
+                var customFilter = gantt.options.value('taskLimitFilter');
 
                 var scrollLeft = gantt.scroll.getScrollLeft();
                 var scrollContainerWidth = gantt.getWidth() - gantt.side.getWidth();
@@ -23,20 +24,26 @@
                     if (task.active) {
                         res.push(task);
                     } else {
-                        // If the task can be drawn with gantt columns only.
-                        if (task.model.to >= fromDate && task.model.from <= toDate) {
-
-                            if (task.left === undefined) {
-                                task.updatePosAndSize();
-                            }
-
-                            // If task has a visible part on the screen
-                            if (!scrollContainerWidth ||
-                                task.left >= scrollLeft && task.left <= scrollLeft + scrollContainerWidth ||
-                                task.left + task.width >= scrollLeft && task.left + task.width <= scrollLeft + scrollContainerWidth ||
-                                task.left < scrollLeft && task.left + task.width > scrollLeft + scrollContainerWidth) {
-
+                        if (customFilter && typeof customFilter === 'function') {
+                            if (customFilter(task, scrollLeft, scrollContainerWidth)) {
                                 res.push(task);
+                            }
+                        } else {
+                            // If the task can be drawn with gantt columns only.
+                            if (task.model.to >= fromDate && task.model.from <= toDate) {
+
+                                if (task.left === undefined) {
+                                    task.updatePosAndSize();
+                                }
+
+                                // If task has a visible part on the screen
+                                if (!scrollContainerWidth ||
+                                    task.left >= scrollLeft && task.left <= scrollLeft + scrollContainerWidth ||
+                                    task.left + task.width >= scrollLeft && task.left + task.width <= scrollLeft + scrollContainerWidth ||
+                                    task.left < scrollLeft && task.left + task.width > scrollLeft + scrollContainerWidth) {
+
+                                    res.push(task);
+                                }
                             }
                         }
                     }
@@ -49,4 +56,3 @@
         };
     }]);
 }());
-

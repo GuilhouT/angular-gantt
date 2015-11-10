@@ -21,6 +21,7 @@
                 sortMode: '=?',
                 filterTask: '=?',
                 filterTaskComparator: '=?',
+                taskLimitFilter: '=?',
                 filterRow: '=?',
                 filterRowComparator: '=?',
                 viewScale: '=?',
@@ -78,4 +79,3 @@
         };
     }]);
 }());
-
