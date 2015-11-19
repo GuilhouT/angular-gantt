@@ -1,15 +1,21 @@
 /*
+<<<<<<< HEAD
 <<<<<<< 8e6a1e5908e513183cba5cad0ceed74add3a85bd
 Project: angular-gantt v1.2.8 - Gantt chart component for AngularJS
 Authors: Marco Schweighauser, Rémi Alvergnat
 License: MIT
 Homepage: https://www.angular-gantt.com
 =======
+=======
+>>>>>>> 4e75dcea1e938e11075908b999d3f460f36f0ab8
 Project: angular-gantt v1.2.6 - Gantt chart component for AngularJS
 Authors: Marco Schweighauser, Rémi Alvergnat
 License: MIT
 Homepage: http://www.angular-gantt.com
+<<<<<<< HEAD
 >>>>>>> fix(scrollableHeader): dist
+=======
+>>>>>>> 4e75dcea1e938e11075908b999d3f460f36f0ab8
 Github: https://github.com/angular-gantt/angular-gantt.git
 */
 (function(){
@@ -219,12 +225,15 @@ Github: https://github.com/angular-gantt/angular-gantt.git
             }
         };
 
+<<<<<<< HEAD
 <<<<<<< 8e6a1e5908e513183cba5cad0ceed74add3a85bd
         $scope.gantt.api.rows.on.remove($scope, refresh);
         $scope.gantt.api.rows.on.add($scope, refresh);
 
 =======
 >>>>>>> fix(scrollableHeader): dist
+=======
+>>>>>>> 4e75dcea1e938e11075908b999d3f460f36f0ab8
         var isRowCollapsed = function(rowId) {
             var row;
             if (typeof rowId === 'string') {
