@@ -9,7 +9,7 @@ Display tooltips when moving mouse over a task.
 <!-- -->
 
     <div gantt>
-        <gantt-tooltips enabled="..." date-format="..."><gantt-tooltips/>
+        <gantt-tooltips enabled="..." date-format="..."></gantt-tooltips>
     </div>
 
 <!-- -->
@@ -31,6 +31,12 @@ Display tooltips when moving mouse over a task.
     See [momentJS#format()](http://momentjs.com/docs/#/displaying/format/)
     
     default: `MMM DD, HH:mm`
+
+- ### delay
+
+    Delay in millisecond before the tooltip is displayed.
+    
+    default: `500`
 
 - ### content
 
