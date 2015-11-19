@@ -1,8 +1,15 @@
 /*
+<<<<<<< 8e6a1e5908e513183cba5cad0ceed74add3a85bd
 Project: angular-gantt v1.2.8 - Gantt chart component for AngularJS
 Authors: Marco Schweighauser, Rémi Alvergnat
 License: MIT
 Homepage: https://www.angular-gantt.com
+=======
+Project: angular-gantt v1.2.6 - Gantt chart component for AngularJS
+Authors: Marco Schweighauser, Rémi Alvergnat
+License: MIT
+Homepage: http://www.angular-gantt.com
+>>>>>>> fix(scrollableHeader): dist
 Github: https://github.com/angular-gantt/angular-gantt.git
 */
 (function(){
@@ -114,6 +121,7 @@ Github: https://github.com/angular-gantt/angular-gantt.git
             }
         });
 
+<<<<<<< 8e6a1e5908e513183cba5cad0ceed74add3a85bd
         var removeWatch = $scope.pluginScope.$watch('display', updateTaskGroup);
 
         $scope.$watchCollection('gantt.rowsManager.filteredRows', updateTaskGroup);
@@ -121,6 +129,19 @@ Github: https://github.com/angular-gantt/angular-gantt.git
         $scope.gantt.api.columns.on.refresh($scope, updateTaskGroup);
 
         $scope.$on('$destroy', removeWatch);
+=======
+        $scope.pluginScope.$watch('display', function() {
+            updateTaskGroup();
+        });
+
+        $scope.$watchCollection('gantt.rowsManager.filteredRows', function() {
+            updateTaskGroup();
+        });
+
+        $scope.gantt.api.columns.on.refresh($scope, function() {
+            updateTaskGroup();
+        });
+>>>>>>> fix(scrollableHeader): dist
     }]);
 }());
 

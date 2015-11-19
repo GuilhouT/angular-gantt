@@ -1,8 +1,15 @@
 /*
+<<<<<<< 8e6a1e5908e513183cba5cad0ceed74add3a85bd
 Project: angular-gantt v1.2.8 - Gantt chart component for AngularJS
 Authors: Marco Schweighauser, Rémi Alvergnat
 License: MIT
 Homepage: https://www.angular-gantt.com
+=======
+Project: angular-gantt v1.2.6 - Gantt chart component for AngularJS
+Authors: Marco Schweighauser, Rémi Alvergnat
+License: MIT
+Homepage: http://www.angular-gantt.com
+>>>>>>> fix(scrollableHeader): dist
 Github: https://github.com/angular-gantt/angular-gantt.git
 */
 (function(){
