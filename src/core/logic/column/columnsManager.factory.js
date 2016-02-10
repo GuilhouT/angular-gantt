@@ -1,6 +1,6 @@
 (function(){
     'use strict';
-    angular.module('gantt').factory('GanttColumnsManager', ['GanttColumnGenerator', 'GanttHeaderGenerator', '$filter', '$timeout', 'ganttLayout', 'ganttBinarySearch', 'moment', function(ColumnGenerator, HeaderGenerator, $filter, $timeout, layout, bs, moment) {
+    angular.module('gantt').factory('GanttColumnsManager', ['GanttColumnGenerator', 'GanttColumnBuilder', 'GanttHeadersGenerator', '$filter', '$timeout', 'ganttLayout', 'ganttBinarySearch', 'moment', function(ColumnGenerator, ColumnBuilder, HeadersGenerator, $filter, $timeout, layout, bs, moment) {
         var ColumnsManager = function(gantt) {
             var self = this;
 
@@ -18,6 +18,8 @@
             this.visibleHeaders = [];
 
             this.scrollAnchor = undefined;
+
+            this.columnBuilder = new ColumnBuilder(this);
 
             // Add a watcher if a view related setting changed from outside of the Gantt. Update the gantt accordingly if so.
             // All those changes need a recalculation of the header columns
@@ -149,11 +151,8 @@
             this.from = from;
             this.to = to;
 
-            var columnGenerator = new ColumnGenerator(this);
-            var headerGenerator = new HeaderGenerator(this);
-
-            this.columns = columnGenerator.generate(from, to);
-            this.headers = headerGenerator.generate(this.columns);
+            this.columns = ColumnGenerator.generate(this.columnBuilder, from, to, this.gantt.options.value('viewScale'), this.getColumnsWidth());
+            this.headers = HeadersGenerator.generate(this);
             this.previousColumns = [];
             this.nextColumns = [];
 
@@ -237,7 +236,7 @@
             var columns = bs.get(extendedColumns, date, function(c) {
                 return c.date;
             }, true);
-            return columns[0] !== undefined ? columns[0] : columns[1];
+            return columns[0] === undefined ? columns[1] : columns[0];
         };
 
         // Returns the column at the given position x (in em)
@@ -287,7 +286,7 @@
         ColumnsManager.prototype.getColumnsWidth = function() {
             var columnWidth = this.gantt.options.value('columnWidth');
             if (columnWidth === undefined) {
-                if (this.gantt.width <= 0) {
+                if (!this.gantt.width || this.gantt.width <= 0) {
                     columnWidth = 20;
                 } else {
                     columnWidth = this.gantt.width / this.columns.length;
@@ -301,12 +300,14 @@
         };
 
         ColumnsManager.prototype.expandExtendedColumnsForPosition = function(x) {
+            var viewScale;
             if (x < 0) {
                 var firstColumn = this.getFirstColumn();
                 var from = firstColumn.date;
                 var firstExtendedColumn = this.getFirstColumn(true);
                 if (!firstExtendedColumn || firstExtendedColumn.left > x) {
-                    this.previousColumns = new ColumnGenerator(this).generate(from, undefined, -x, 0, true);
+                    viewScale = this.gantt.options.value('viewScale');
+                    this.previousColumns = ColumnGenerator.generate(this.columnBuilder, from, undefined, viewScale, this.getColumnsWidth(), -x, 0, true);
                 }
                 return true;
             } else if (x > this.gantt.width) {
@@ -314,7 +315,8 @@
                 var endDate = lastColumn.getDateByPosition(lastColumn.width);
                 var lastExtendedColumn = this.getLastColumn(true);
                 if (!lastExtendedColumn || lastExtendedColumn.left + lastExtendedColumn.width < x) {
-                    this.nextColumns = new ColumnGenerator(this).generate(endDate, undefined, x - this.gantt.width, this.gantt.width, false);
+                    viewScale = this.gantt.options.value('viewScale');
+                    this.nextColumns = ColumnGenerator.generate(this.columnBuilder, endDate, undefined, viewScale, this.getColumnsWidth(), x - this.gantt.width, this.gantt.width, false);
                 }
                 return true;
             }
@@ -334,16 +336,19 @@
                 endDate = lastColumn.getDateByPosition(lastColumn.width);
             }
 
+            var viewScale;
             if (from && date < from) {
                 var firstExtendedColumn = this.getFirstColumn(true);
                 if (!firstExtendedColumn || firstExtendedColumn.date > date) {
-                    this.previousColumns = new ColumnGenerator(this).generate(from, date, undefined, 0, true);
+                    viewScale = this.gantt.options.value('viewScale');
+                    this.previousColumns = ColumnGenerator.generate(this.columnBuilder, from, date, viewScale, this.getColumnsWidth(), undefined, 0, true);
                 }
                 return true;
             } else if (endDate && date >= endDate) {
                 var lastExtendedColumn = this.getLastColumn(true);
                 if (!lastExtendedColumn || lastExtendedColumn.date < endDate) {
-                    this.nextColumns = new ColumnGenerator(this).generate(endDate, date, undefined, this.gantt.width, false);
+                    viewScale = this.gantt.options.value('viewScale');
+                    this.nextColumns = ColumnGenerator.generate(this.columnBuilder, endDate, date, viewScale, this.getColumnsWidth(), undefined, this.gantt.width, false);
                 }
                 return true;
             }

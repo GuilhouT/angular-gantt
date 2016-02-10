@@ -71,13 +71,18 @@
             this.gantt.api.registerEvent('tasks', 'viewChange');
 
             this.gantt.api.registerEvent('tasks', 'rowChange');
+            this.gantt.api.registerEvent('tasks', 'viewRowChange');
             this.gantt.api.registerEvent('tasks', 'remove');
             this.gantt.api.registerEvent('tasks', 'filter');
+
+            this.gantt.api.registerEvent('tasks', 'displayed');
 
             this.gantt.api.registerEvent('rows', 'add');
             this.gantt.api.registerEvent('rows', 'change');
             this.gantt.api.registerEvent('rows', 'remove');
             this.gantt.api.registerEvent('rows', 'move');
+
+            this.gantt.api.registerEvent('rows', 'displayed');
 
             this.gantt.api.registerEvent('rows', 'filter');
 
@@ -327,6 +332,9 @@
 
             // TODO: Implement rowLimit like columnLimit to enhance performance for gantt with many rows
             this.visibleRows = this.customFilteredRows;
+
+            this.gantt.api.rows.raise.displayed(this.sortedRows, this.filteredRows, this.visibleRows);
+
             if (raiseEvent) {
                 this.gantt.api.rows.raise.filter(this.sortedRows, this.filteredRows);
             }
@@ -362,18 +370,22 @@
             var oldFilteredTasks = [];
             var filteredTasks = [];
             var tasks = [];
+            var visibleTasks = [];
 
             angular.forEach(this.rows, function(row) {
                 oldFilteredTasks = oldFilteredTasks.concat(row.filteredTasks);
                 row.updateVisibleTasks();
                 filteredTasks = filteredTasks.concat(row.filteredTasks);
+                visibleTasks = visibleTasks.concat(row.visibleTasks);
                 tasks = tasks.concat(row.tasks);
             });
+
+            this.gantt.api.tasks.raise.displayed(tasks, filteredTasks, visibleTasks);
 
             var filterEvent = !angular.equals(oldFilteredTasks, filteredTasks);
 
             if (filterEvent) {
-                this.gantt.api.tasks.raise.filter(tasks, filteredTasks);
+                this.gantt.api.tasks.raise.filter(tasks, filteredTasks, visibleTasks);
             }
         };
 

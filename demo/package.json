@@ -1,6 +1,6 @@
 {
   "name": "angular-gantt-demo",
-  "version": "1.2.8",
+  "version": "1.2.11",
   "description": "Gantt chart component for AngularJS - Demo",
   "author": "Marco Schweighauser",
   "contributors": [
@@ -41,7 +41,8 @@
     "karma-phantomjs-launcher": "^0.2.1",
     "load-grunt-tasks": "^3.3.0",
     "serve-static": "^1.10.0",
-    "time-grunt": "^1.2.1"
+    "time-grunt": "^1.2.1",
+    "socket.io": "~1.3.0"
   },
   "engines": {
     "node": ">=0.10.0"
