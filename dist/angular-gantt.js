@@ -4697,7 +4697,7 @@ Github: https://github.com/angular-gantt/angular-gantt.git
                 if (columnWidth !== undefined && bodySmallerThanGantt) {
                     css.width = ($scope.gantt.width - vScrollbarWidth + this.gantt.scroll.getBordersWidth()) + 'px';
                 } else if (maxHeightActivated) {
-                    css.width = $scope.gantt.getWidth() - $scope.gantt.side.getWidth() - vScrollbarWidth + 'px';
+                    css.width = $scope.gantt.getWidth() - $scope.gantt.side.getWidth() + 1 - vScrollbarWidth + 'px';
                 }
 
                 /*
@@ -4713,7 +4713,6 @@ Github: https://github.com/angular-gantt/angular-gantt.git
         return builder.build();
     }]);
 }());
-
 
 (function(){
     'use strict';
