@@ -246,7 +246,10 @@
                 });
 
                 var newTasks = {};
-                angular.forEach(tasks, function(task) {
+                var filtered = tasks.filter(function (task) {
+                    return task.row.model.dependencies === undefined || task.row.model.dependencies;
+                });
+                angular.forEach(filtered, function(task) {
                     newTasks[task.model.id] = task;
                     addTaskEndpoints(task);
                     addTaskMouseHandler(task);
@@ -280,20 +283,22 @@
              * @param task
              */
             this.setTask = function(task) {
-                self.plumb.setSuspendDrawing(true);
-                try {
-                    var oldTask = self.tasks[task.model.id];
-                    if (oldTask !== undefined) {
-                        disconnectTaskDependencies(oldTask);
-                        removeTaskMouseHandler(oldTask);
-                        removeTaskEndpoint(oldTask);
+                if (task.row.model.dependencies === undefined || task.row.model.dependencies) {
+                    self.plumb.setSuspendDrawing(true);
+                    try {
+                        var oldTask = self.tasks[task.model.id];
+                        if (oldTask !== undefined) {
+                            disconnectTaskDependencies(oldTask);
+                            removeTaskMouseHandler(oldTask);
+                            removeTaskEndpoint(oldTask);
+                        }
+                        self.tasks[task.model.id] = task;
+                        addTaskEndpoints(task);
+                        addTaskMouseHandler(task);
+                        connectTaskDependencies(task);
+                    } finally {
+                        self.plumb.setSuspendDrawing(false, true);
                     }
-                    self.tasks[task.model.id] = task;
-                    addTaskEndpoints(task);
-                    addTaskMouseHandler(task);
-                    connectTaskDependencies(task);
-                } finally {
-                    self.plumb.setSuspendDrawing(false, true);
                 }
             };
 
