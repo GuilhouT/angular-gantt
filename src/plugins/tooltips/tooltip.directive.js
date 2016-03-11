@@ -177,14 +177,20 @@
                 };
 
                 var updateTooltip = function(x) {
+                    var isRightAligned;
+
                     // Check if info is overlapping with view port
                     if (x + $element[0].offsetWidth > getViewPortWidth()) {
                         $element.css('left', (x + 20 - $element[0].offsetWidth) + 'px');
-                        $scope.isRightAligned = true;
+                        isRightAligned = true;
                     } else {
                         $element.css('left', (x - 20) + 'px');
-                        $scope.isRightAligned = false;
+                        isRightAligned = false;
                     }
+
+                    $scope.$evalAsync(function () {
+                        $scope.isRightAligned = isRightAligned;
+                    });
                 };
 
                 var hideTooltip = function() {
