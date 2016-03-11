@@ -2347,14 +2347,14 @@ Github: https://github.com/angular-gantt/angular-gantt.git
             if ($scope.taskGroup !== undefined) {
                 if ($scope.taskGroup.tasks.indexOf(task) > -1) {
                     updateTaskGroup();
-                    if(!$scope.$$phase) {
+                    if(!$scope.$$phase && !$scope.$root.$$phase) {
                         $scope.$digest();
                     }
                 } else {
                     var descendants = $scope.pluginScope.hierarchy.descendants($scope.row);
                     if (descendants.indexOf(task.row) > -1) {
                         updateTaskGroup();
-                        if(!$scope.$$phase) {
+                        if(!$scope.$$phase && !$scope.$root.$$phase) {
                             $scope.$digest();
                         }
                     }
@@ -2781,13 +2781,50 @@ Github: https://github.com/angular-gantt/angular-gantt.git
                             e.clientY > $scope.taskRect.bottom ||
                             e.clientY < $scope.taskRect.top
                         ) {
-                            displayTooltip(false, false);
+                            var taskTooltips = $scope.task.model.tooltips;
+                            var rowTooltips = $scope.task.row.model.tooltips;
+
+                            if (typeof(taskTooltips) === 'boolean') {
+                                taskTooltips = {enabled: taskTooltips};
+                            }
+
+                            if (typeof(rowTooltips) === 'boolean') {
+                                rowTooltips = {enabled: rowTooltips};
+                            }
+
+                            var sticky = utils.firstProperty([taskTooltips, rowTooltips], 'sticky', $scope.pluginScope.sticky);
+
+                            if (sticky && e.originalEvent.movementY < 0) {
+                                mouseMoveHandler.unbind();
+                                $timeout(function () {
+                                    if (visible && $element.is(':hover')) {
+                                        mouseLeaveTooltipHandler.bindOnce();
+                                    } else {
+                                        displayTooltip(false, false);
+                                    }
+                                }, 100);
+                            } else {
+                              displayTooltip(false, false);
+                            }
                         }
 
                         updateTooltip(e.clientX);
                     }
                 }, 5, false));
 
+                var mouseLeaveTooltipHandler = smartEvent($scope, $element, 'mouseleave', function (e) {
+                    if (e.originalEvent.movementY > 0) {
+                        $timeout(function () {
+                            if (parentElement.is(':hover')) {
+                                mouseMoveHandler.bind();
+                            } else {
+                                displayTooltip(false, false);
+                            }
+                        }, 100);
+                    } else {
+                        displayTooltip(false, false);
+                    }
+                });
 
                 $scope.task.getContentElement().bind('mousemove', function(evt) {
                     mouseEnterX = evt.clientX;
@@ -2799,7 +2836,20 @@ Github: https://github.com/angular-gantt/angular-gantt.git
                 });
 
                 $scope.task.getContentElement().bind('mouseleave', function() {
-                    displayTooltip(false);
+                    var taskTooltips = $scope.task.model.tooltips;
+                    var rowTooltips = $scope.task.row.model.tooltips;
+
+                    if (typeof(taskTooltips) === 'boolean') {
+                        taskTooltips = {enabled: taskTooltips};
+                    }
+
+                    if (typeof(rowTooltips) === 'boolean') {
+                        rowTooltips = {enabled: rowTooltips};
+                    }
+
+                    var sticky = utils.firstProperty([taskTooltips, rowTooltips], 'sticky', $scope.pluginScope.sticky);
+
+                    if (!sticky) displayTooltip(false);
                 });
 
                 if ($scope.pluginScope.api.tasks.on.moveBegin) {
@@ -2887,14 +2937,20 @@ Github: https://github.com/angular-gantt/angular-gantt.git
                 };
 
                 var updateTooltip = function(x) {
+                    var isRightAligned;
+
                     // Check if info is overlapping with view port
                     if (x + $element[0].offsetWidth > getViewPortWidth()) {
                         $element.css('left', (x + 20 - $element[0].offsetWidth) + 'px');
-                        $scope.isRightAligned = true;
+                        isRightAligned = true;
                     } else {
                         $element.css('left', (x - 20) + 'px');
-                        $scope.isRightAligned = false;
+                        isRightAligned = false;
                     }
+
+                    $scope.$evalAsync(function () {
+                        $scope.isRightAligned = isRightAligned;
+                    });
                 };
 
                 var hideTooltip = function() {
