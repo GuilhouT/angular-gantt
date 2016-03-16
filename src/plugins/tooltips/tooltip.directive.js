@@ -158,7 +158,9 @@
 
                     var sticky = utils.firstProperty([taskTooltips, rowTooltips], 'sticky', $scope.pluginScope.sticky);
 
-                    if (!sticky) displayTooltip(false);
+                    if (!sticky) {
+                        displayTooltip(false);
+                    }
                 });
 
                 if ($scope.pluginScope.api.tasks.on.moveBegin) {
