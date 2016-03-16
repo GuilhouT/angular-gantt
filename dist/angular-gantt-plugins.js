@@ -1333,6 +1333,7 @@ Github: https://github.com/angular-gantt/angular-gantt.git
             },
             link: function(scope, element, attrs, ganttCtrl) {
                 var api = ganttCtrl.gantt.api;
+                var sticked;
 
                 // Load options from global options attribute.
                 if (scope.options && typeof(scope.options.tooltips) === 'object') {
@@ -1379,6 +1380,24 @@ Github: https://github.com/angular-gantt/angular-gantt.git
                         taskElement.append($compile(ifElement)(tooltipScope));
                     }
                 });
+
+
+                function stick(cancel) {
+                    unstick();
+                    sticked = { cancel: cancel };
+                }
+
+                api.registerMethod('tooltips', 'stick', stick);
+
+                function unstick() {
+                    if (sticked) {
+                        sticked.cancel();
+                        sticked = null;
+                    }
+                }
+
+                api.registerMethod('tooltips', 'unstick', unstick);
+
             }
         };
     }]);
@@ -2831,8 +2850,27 @@ Github: https://github.com/angular-gantt/angular-gantt.git
                 });
 
                 $scope.task.getContentElement().bind('mouseenter', function(evt) {
+                    var taskTooltips = $scope.task.model.tooltips;
+                    var rowTooltips = $scope.task.row.model.tooltips;
+
+                    if (typeof(taskTooltips) === 'boolean') {
+                        taskTooltips = {enabled: taskTooltips};
+                    }
+
+                    if (typeof(rowTooltips) === 'boolean') {
+                        rowTooltips = {enabled: rowTooltips};
+                    }
+
+                    var sticky = utils.firstProperty([taskTooltips, rowTooltips], 'sticky', $scope.pluginScope.sticky);
+
                     mouseEnterX = evt.clientX;
                     displayTooltip(true, true);
+
+                    if (sticky) {
+                        $scope.gantt.api.tooltips.stick(function () {
+                            displayTooltip(false, false);
+                        });
+                    }
                 });
 
                 $scope.task.getContentElement().bind('mouseleave', function() {
@@ -2849,7 +2887,9 @@ Github: https://github.com/angular-gantt/angular-gantt.git
 
                     var sticky = utils.firstProperty([taskTooltips, rowTooltips], 'sticky', $scope.pluginScope.sticky);
 
-                    if (!sticky) displayTooltip(false);
+                    if (!sticky) {
+                        displayTooltip(false);
+                    }
                 });
 
                 if ($scope.pluginScope.api.tasks.on.moveBegin) {

@@ -12,6 +12,7 @@
             },
             link: function(scope, element, attrs, ganttCtrl) {
                 var api = ganttCtrl.gantt.api;
+                var sticked;
 
                 // Load options from global options attribute.
                 if (scope.options && typeof(scope.options.tooltips) === 'object') {
@@ -58,6 +59,24 @@
                         taskElement.append($compile(ifElement)(tooltipScope));
                     }
                 });
+
+
+                function stick(cancel) {
+                    unstick();
+                    sticked = { cancel: cancel };
+                }
+
+                api.registerMethod('tooltips', 'stick', stick);
+
+                function unstick() {
+                    if (sticked) {
+                        sticked.cancel();
+                        sticked = null;
+                    }
+                }
+
+                api.registerMethod('tooltips', 'unstick', unstick);
+
             }
         };
     }]);

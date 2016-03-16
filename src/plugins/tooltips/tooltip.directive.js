@@ -121,8 +121,27 @@
                 });
 
                 $scope.task.getContentElement().bind('mouseenter', function(evt) {
+                    var taskTooltips = $scope.task.model.tooltips;
+                    var rowTooltips = $scope.task.row.model.tooltips;
+
+                    if (typeof(taskTooltips) === 'boolean') {
+                        taskTooltips = {enabled: taskTooltips};
+                    }
+
+                    if (typeof(rowTooltips) === 'boolean') {
+                        rowTooltips = {enabled: rowTooltips};
+                    }
+
+                    var sticky = utils.firstProperty([taskTooltips, rowTooltips], 'sticky', $scope.pluginScope.sticky);
+
                     mouseEnterX = evt.clientX;
                     displayTooltip(true, true);
+
+                    if (sticky) {
+                        $scope.gantt.api.tooltips.stick(function () {
+                            displayTooltip(false, false);
+                        });
+                    }
                 });
 
                 $scope.task.getContentElement().bind('mouseleave', function() {
@@ -139,7 +158,9 @@
 
                     var sticky = utils.firstProperty([taskTooltips, rowTooltips], 'sticky', $scope.pluginScope.sticky);
 
-                    if (!sticky) displayTooltip(false);
+                    if (!sticky) {
+                        displayTooltip(false);
+                    }
                 });
 
                 if ($scope.pluginScope.api.tasks.on.moveBegin) {
