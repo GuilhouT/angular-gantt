@@ -247,7 +247,7 @@
 
                 var newTasks = {};
                 var filtered = tasks.filter(function (task) {
-                    return task.row.model.dependencies === undefined || task.row.model.dependencies;
+                    return task.$element && (task.row.model.dependencies === undefined || task.row.model.dependencies);
                 });
                 angular.forEach(filtered, function(task) {
                     newTasks[task.model.id] = task;
@@ -283,7 +283,7 @@
              * @param task
              */
             this.setTask = function(task) {
-                if (task.row.model.dependencies === undefined || task.row.model.dependencies) {
+                if (task.$element && (task.row.model.dependencies === undefined || task.row.model.dependencies)) {
                     self.plumb.setSuspendDrawing(true);
                     try {
                         var oldTask = self.tasks[task.model.id];
