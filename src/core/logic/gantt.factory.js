@@ -29,7 +29,9 @@
                     'timeFrames': [],
                     'dateFrames': [],
                     'timeFramesWorkingMode': 'hidden',
-                    'timeFramesNonWorkingMode': 'visible'
+                    'timeFramesNonWorkingMode': 'visible',
+                    'capacity': -1,
+                    'capacityEnabled': false
                 });
 
                 this.api = new GanttApi(this);

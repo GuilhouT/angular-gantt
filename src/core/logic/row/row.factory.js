@@ -84,8 +84,9 @@
             }
         };
 
-        Row.prototype.updateVisibleTasks = function() {
+        Row.prototype.updateVisibleTasks = function(capacity) {
             var filterTask = this.rowsManager.gantt.options.value('filterTask');
+
             if (filterTask) {
                 if (typeof(filterTask) === 'object') {
                     filterTask = {model: filterTask};
@@ -103,6 +104,10 @@
                 this.filteredTasks = this.tasks.slice(0);
             }
             this.visibleTasks = $filter('ganttTaskLimit')(this.filteredTasks, this.rowsManager.gantt);
+
+            if (capacity < this.visibleTasks.length) {
+                this.visibleTasks = this.visibleTasks.slice(0, capacity);
+            }
         };
 
         Row.prototype.updateTasksPosAndSize = function() {

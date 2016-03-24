@@ -313,11 +313,11 @@
 
                 var filterRowComparator = this.gantt.options.value('filterRowComparator');
                 if (typeof(filterRowComparator) === 'function') {
-					//fix issue this.gantt is undefined
-					//
-					var gantt = this.gantt;
+                    //fix issue this.gantt is undefined
+                    //
+                    var gantt = this.gantt;
                     filterRowComparator = function(actual, expected) {
-						//fix actual.model is undefined
+                        //fix actual.model is undefined
                         return gantt.options.value('filterRowComparator')(actual, expected);
                     };
                 }
@@ -372,13 +372,22 @@
             var tasks = [];
             var visibleTasks = [];
 
-            angular.forEach(this.rows, function(row) {
+            var options = this.gantt.options;
+            var capacity = options.value('capacity');
+            var capacityEnabled = options.value('capacityEnabled');
+
+            angular.forEach(this.rows, function (row) {
                 oldFilteredTasks = oldFilteredTasks.concat(row.filteredTasks);
-                row.updateVisibleTasks();
+
+                var rowCapacity = !capacityEnabled || capacity === -1 ?
+                    row.tasks.length : capacity - visibleTasks.length;
+
+                row.updateVisibleTasks(rowCapacity);
+
                 filteredTasks = filteredTasks.concat(row.filteredTasks);
                 visibleTasks = visibleTasks.concat(row.visibleTasks);
                 tasks = tasks.concat(row.tasks);
-            });
+            }, this);
 
             this.gantt.api.tasks.raise.displayed(tasks, filteredTasks, visibleTasks);
 

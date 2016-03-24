@@ -18,6 +18,8 @@
                 return templateUrl;
             },
             scope: {
+                capacity: '=?',
+                capacityEnabled: '=?',
                 sortMode: '=?',
                 filterTask: '=?',
                 filterTaskComparator: '=?',
